@@ -1,0 +1,16 @@
+# Ignore machine and cache files
+*.DS_Store
+
+# Dependency directories
+node_modules/
+
+# Next Core
+.next
+
+# Compiled binary addons (http://nodejs.org/api/addons.html)
+build/Release
+
+# Environment variables
+.env
+.env.*
+!.env.example
