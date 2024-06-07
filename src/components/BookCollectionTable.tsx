@@ -292,9 +292,9 @@ function DataTable<TData, TValue>({
 // Component for rendering the BooksTable
 function BookCollectionTable() {
   // Store management
-  const { books } = useBookCollectionStore()
+  const { books, filteredBooks } = useBookCollectionStore()
 
-  return <DataTable columns={columns} data={books} />
+  return <DataTable columns={columns} data={filteredBooks.length === 0 ? books : filteredBooks} />
 }
 
 export default BookCollectionTable
