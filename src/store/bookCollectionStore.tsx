@@ -3,12 +3,25 @@ import { BookCollectionProps, FetchedBookProps } from '@/types';
 
 export interface BookCollectionState {
   books: BookCollectionProps[] | [];
+  selectedBook: BookCollectionProps;
   fetchBooks: () => void;
-  saveBookInfo: (bookObj: BookCollectionProps[]) => void;
+  setBooks: (booksArr: BookCollectionProps[]) => void;
+  setSelectedBook: (bookObj: BookCollectionProps) => void;
 }
 
-export const useBookCollectionStore = create<BookCollectionState>((set) => ({
+export const defaultFormValues: BookCollectionProps = {
+  id: -1,
+  title: "",
+  author: "",
+  genre: "",
+  rating: 0,
+  categories: [],
+  tags: []
+}
+
+export const useBookCollectionStore = create<BookCollectionState>((set, get) => ({
   books: [],
+  selectedBook: defaultFormValues,
   fetchBooks: () => {
     const fetchAmount = 4
     const getBookLocally = localStorage.getItem("books");
@@ -38,8 +51,11 @@ export const useBookCollectionStore = create<BookCollectionState>((set) => ({
     }
     
   },
-  saveBookInfo: (bookObj) => {
-    localStorage.setItem("books", JSON.stringify(bookObj));
-    set(() => ({ books: bookObj }))
+  setBooks: (booksArr) => {
+    localStorage.setItem("books", JSON.stringify(booksArr));
+    set(() => ({ books: booksArr }));
+  },
+  setSelectedBook: (bookObj) => {
+    set({ selectedBook: bookObj })
   }
 }));

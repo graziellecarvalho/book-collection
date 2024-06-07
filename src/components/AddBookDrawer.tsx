@@ -1,4 +1,4 @@
-import { useState } from "react"
+import React, { useEffect } from "react"
 import {
   Drawer,
   DrawerContent,
@@ -25,7 +25,8 @@ import { ScrollArea } from "./ui/scroll-area"
 import { BookCollectionProps } from "@/types"
 import mockData from '../mockData/mockData.json'
 
-import { useBookCollectionStore } from "@/store/bookCollectionStore"
+import { useBookCollectionStore, defaultFormValues } from "@/store/bookCollectionStore"
+import { useAppStore } from "@/store/appStore"
 
 type FormSchemaKeys = keyof z.infer<typeof formSchema>;
 
@@ -44,17 +45,8 @@ const formSchema = z.object({
 })
 
 function AddBookDrawer() {
-  const [open, setOpen] = useState(false)
-  const { books, saveBookInfo } = useBookCollectionStore()
-
-  const defaultFormValues = {
-    title: "",
-    author: "",
-    genre: "",
-    rating: 0,
-    categories: [],
-    tags: []
-  }
+  const { books, setSelectedBook, setBooks, selectedBook } = useBookCollectionStore()
+  const { displayForm, setDisplayForm } = useAppStore()
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -70,9 +62,22 @@ function AddBookDrawer() {
 
     form.trigger()
 
-    saveBookInfo(updatedBooks)
+    setBooks(updatedBooks)
     form.reset(defaultFormValues)
-    setOpen(false)
+    setDisplayForm(false)
+  }
+
+  const onUpdateBook = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+
+    const tempBooksArray = books
+    const findBooks = tempBooksArray.find(book => book.id === selectedBook.id)
+
+    if(findBooks)
+      Object.assign(findBooks, form.getValues())
+  
+    setBooks(tempBooksArray)
+    setDisplayForm(false)
   }
 
   const fieldsInput: { name: FormSchemaKeys; label: string }[] = [
@@ -82,13 +87,31 @@ function AddBookDrawer() {
     { name: "rating", label: "Rating" },
   ]
 
+  const closeDrawer = () => {
+    setDisplayForm(false)
+    setSelectedBook({ ...defaultFormValues, id: -1})
+  }
+
+  useEffect(() => {
+    if(selectedBook.id !== -1 && displayForm) {
+      form.setValue("title", selectedBook.title)
+      form.setValue("author", selectedBook.author)
+      form.setValue("genre", selectedBook.genre)
+      selectedBook.rating !== undefined && form.setValue("rating", selectedBook.rating)
+      selectedBook.categories !== undefined && form.setValue("categories", selectedBook.categories)
+      selectedBook.tags !== undefined && form.setValue("tags", selectedBook.tags)
+    } else {
+      form.reset()
+    }
+  }, [displayForm])
+
   return (
-    <Drawer direction='right' open={open} onOpenChange={setOpen} >
+    <Drawer direction='right' open={displayForm} onClose={closeDrawer} onOpenChange={setDisplayForm} >
       {/* OPEN DRAWER */}
       <DrawerTrigger asChild>
-        <Button variant='secondary' className='flex gap-2'>
+        <Button onClick={() => setDisplayForm(true)} variant='secondary' className='flex gap-2'>
           <BookPlus size={18} />
-          Add book
+          Add Book
         </Button>
       </DrawerTrigger>
 
@@ -96,7 +119,7 @@ function AddBookDrawer() {
       <DrawerContent className='h-screen top-0 right-0 left-auto mt-0 w-[500px] rounded-none px-4'>
         <ScrollArea>
           <DrawerHeader className="px-0">
-            <DrawerTitle>Add new Book</DrawerTitle>
+            <DrawerTitle>{selectedBook.id !== -1 ? 'Update Book' : 'Add Book'}</DrawerTitle>
           </DrawerHeader>
 
           <Form {...form}>
@@ -219,7 +242,11 @@ function AddBookDrawer() {
                 </FormItem>
               )}
             />
-              <Button type="submit">Submit</Button>
+              {selectedBook.id !== -1 ? (
+                <Button onClick={(e) => onUpdateBook(e)}>Update</Button>
+              ) : (
+                <Button type="submit">Submit</Button>
+              )}
             </form>
           </Form>
         </ScrollArea>
