@@ -76,7 +76,7 @@ export const columns: ColumnDef<BookCollectionProps>[] = [
 ]
 
 const ContextMenu = ({ book }: { book: BookCollectionProps }) => {
-  const { setSelectedBook } = useBookCollectionStore()
+  const { setSelectedBook, removeBook } = useBookCollectionStore()
   const { setDisplayForm } = useAppStore()
 
   return (
@@ -100,7 +100,7 @@ const ContextMenu = ({ book }: { book: BookCollectionProps }) => {
         </DropdownMenuItem>
         <DropdownMenuItem
           className="gap-2"
-          onClick={() => console.log('remove')}
+          onClick={() => removeBook(book.id)}
         >
           <Trash size="12" />Remove
         </DropdownMenuItem>

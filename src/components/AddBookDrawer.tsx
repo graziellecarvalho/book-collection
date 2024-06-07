@@ -47,7 +47,7 @@ const formSchema = z.object({
 function AddBookDrawer() {
   const { books, setSelectedBook, setBooks, selectedBook } = useBookCollectionStore()
   const { displayForm, setDisplayForm } = useAppStore()
-  
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: defaultFormValues
@@ -70,12 +70,22 @@ function AddBookDrawer() {
   const onUpdateBook = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
 
+    const formValues = form.getValues()
+    const updatedBook = {
+      id: selectedBook.id,
+      title: formValues.title,
+      author: formValues.author,
+      genre: formValues.genre,
+      rating: formValues.rating,
+      categories: formValues.categories,
+      tags: formValues.tags
+    }
     const tempBooksArray = books
     const findBooks = tempBooksArray.find(book => book.id === selectedBook.id)
 
-    if(findBooks)
-      Object.assign(findBooks, form.getValues())
-  
+    if (findBooks)
+      Object.assign(findBooks, updatedBook)
+
     setBooks(tempBooksArray)
     setDisplayForm(false)
   }
@@ -89,11 +99,11 @@ function AddBookDrawer() {
 
   const closeDrawer = () => {
     setDisplayForm(false)
-    setSelectedBook({ ...defaultFormValues, id: -1})
+    setSelectedBook({ ...defaultFormValues, id: -1 })
   }
 
   useEffect(() => {
-    if(selectedBook.id !== -1 && displayForm) {
+    if (selectedBook.id !== -1 && displayForm) {
       form.setValue("title", selectedBook.title)
       form.setValue("author", selectedBook.author)
       form.setValue("genre", selectedBook.genre)
@@ -149,99 +159,99 @@ function AddBookDrawer() {
                 />
               ))}
 
-            {/* CATEGORIES */}
-            <FormField
-              control={form.control}
-              name="categories"
-              render={() => (
-                <FormItem>
-                  <FormLabel>Categories</FormLabel>
-                  <ScrollArea className="h-52 w-full px-2 gap-2 rounded-md border">
-                  {mockData.categories.map((item) => (
-                    <FormField
-                      key={item.id}
-                      control={form.control}
-                      name="categories"
-                      render={({ field }) => {
-                        return (
-                          <FormItem
-                            key={item.id}
-                            className="flex flex-row items-center my-2"
-                          >
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value?.includes(item.id)}
-                                onCheckedChange={(checked) => {
-                                  return checked
-                                    ? field.onChange([...field.value, item.id])
-                                    : field.onChange(
-                                        field.value?.filter(
-                                          (value) => value !== item.id
+              {/* CATEGORIES */}
+              <FormField
+                control={form.control}
+                name="categories"
+                render={() => (
+                  <FormItem>
+                    <FormLabel>Categories</FormLabel>
+                    <ScrollArea className="h-52 w-full px-2 gap-2 rounded-md border">
+                      {mockData.categories.map((item) => (
+                        <FormField
+                          key={item.id}
+                          control={form.control}
+                          name="categories"
+                          render={({ field }) => {
+                            return (
+                              <FormItem
+                                key={item.id}
+                                className="flex flex-row items-center my-2"
+                              >
+                                <FormControl>
+                                  <Checkbox
+                                    checked={field.value?.includes(item.id)}
+                                    onCheckedChange={(checked) => {
+                                      return checked
+                                        ? field.onChange([...field.value, item.id])
+                                        : field.onChange(
+                                          field.value?.filter(
+                                            (value) => value !== item.id
+                                          )
                                         )
-                                      )
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel style={{ margin: 0 }} className="text-sm font-normal px-2 ">
-                              {item.label}
-                            </FormLabel>
-                          </FormItem>
-                        )
-                      }}
-                    />
-                  ))}
-                </ScrollArea>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormLabel style={{ margin: 0 }} className="text-sm font-normal px-2 ">
+                                  {item.label}
+                                </FormLabel>
+                              </FormItem>
+                            )
+                          }}
+                        />
+                      ))}
+                    </ScrollArea>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            {/* TAGS */}
-            <FormField
-              control={form.control}
-              name="tags"
-              render={() => (
-                <FormItem>
-                  <FormLabel>Tags</FormLabel>
-                  <ScrollArea className="h-52 w-full px-2 gap-2 rounded-md border">
-                  {mockData.tags.map((item) => (
-                    <FormField
-                      key={item.id}
-                      control={form.control}
-                      name="tags"
-                      render={({ field }) => {
-                        return (
-                          <FormItem
-                            key={item.id}
-                            className="flex flex-row items-center my-2"
-                          >
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value?.includes(item.id)}
-                                onCheckedChange={(checked) => {
-                                  return checked
-                                    ? field.onChange([...field.value, item.id])
-                                    : field.onChange(
-                                        field.value?.filter(
-                                          (value) => value !== item.id
+              {/* TAGS */}
+              <FormField
+                control={form.control}
+                name="tags"
+                render={() => (
+                  <FormItem>
+                    <FormLabel>Tags</FormLabel>
+                    <ScrollArea className="h-52 w-full px-2 gap-2 rounded-md border">
+                      {mockData.tags.map((item) => (
+                        <FormField
+                          key={item.id}
+                          control={form.control}
+                          name="tags"
+                          render={({ field }) => {
+                            return (
+                              <FormItem
+                                key={item.id}
+                                className="flex flex-row items-center my-2"
+                              >
+                                <FormControl>
+                                  <Checkbox
+                                    checked={field.value?.includes(item.id)}
+                                    onCheckedChange={(checked) => {
+                                      return checked
+                                        ? field.onChange([...field.value, item.id])
+                                        : field.onChange(
+                                          field.value?.filter(
+                                            (value) => value !== item.id
+                                          )
                                         )
-                                      )
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel style={{ margin: 0 }} className="text-sm font-normal px-2 ">
-                              {item.label}
-                            </FormLabel>
-                          </FormItem>
-                        )
-                      }}
-                    />
-                  ))}
-                </ScrollArea>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormLabel style={{ margin: 0 }} className="text-sm font-normal px-2 ">
+                                  {item.label}
+                                </FormLabel>
+                              </FormItem>
+                            )
+                          }}
+                        />
+                      ))}
+                    </ScrollArea>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               {selectedBook.id !== -1 ? (
                 <Button onClick={(e) => onUpdateBook(e)}>Update</Button>
               ) : (

@@ -3,13 +3,16 @@ import './App.css'
 import { useBookCollectionStore } from '@/store/bookCollectionStore'
 import BookCollectionTable from '@/components/BookCollectionTable'
 import AddBookDrawer from './components/AddBookDrawer'
+import { useAppStore } from './store/appStore'
 
 function App() {
   const { fetchBooks } = useBookCollectionStore()
+  const { displayForm } = useAppStore()
 
   useEffect(() => {
-    fetchBooks()
-  }, [])
+    if (!displayForm)
+      fetchBooks()
+  }, [displayForm])
 
   return (
     <div>
