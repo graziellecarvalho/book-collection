@@ -22,26 +22,33 @@ import uuid from 'react-uuid';
 import { useBookCollectionStore } from "@/store/bookCollectionStore"
 import { useAppStore } from "@/store/appStore"
 import DrawerComponent from "./DrawerComponent"
+import { useToast } from "@/components/ui/use-toast"
 
-type FormSchemaKeys = keyof z.infer<typeof formSchema>;
+// type FormSchemaKeys = keyof z.infer<typeof formSchema>;
 
-// Fields Validation
-const formSchema = z.object({
-  title: z.string().min(3).max(50),
-  author: z.string().min(3).max(50),
-  genre: z.string().min(3).max(50),
-  rating: z.coerce.number().min(1).max(5),
-  categories: z.array(z.string()).refine((val => val.length > 0), {
-    message: 'You have to select at least one category.',
-  }),
-  tags: z.array(z.string()).refine((value) => value.some((item) => item), {
-    message: "You have to select at least one tag.",
-  }),
-})
-
-function AddBookDrawer() {
+function BookForm() {
   const { books, setBooks, selectedBook, categories, tags } = useBookCollectionStore()
   const { drawerMode, setDrawerMode } = useAppStore()
+
+  const { toast } = useToast()
+
+  // Fields Validation
+  const formSchema = z.object({
+    title: z.string().min(3).max(50).refine(
+      (val) => !books.map(({ title }) => title).includes(val), {
+        message: "This title already exists"
+      }
+    ),
+    author: z.string().min(3).max(50),
+    genre: z.string().min(3).max(50),
+    rating: z.coerce.number().min(1).max(5),
+    categories: z.array(z.string()).refine((val => val.length > 0), {
+      message: 'You have to select at least one category.',
+    }),
+    tags: z.array(z.string()).refine((value) => value.some((item) => item), {
+      message: "You have to select at least one tag.",
+    }),
+  })
 
   const defaultFormValues = {
     categories: [],
@@ -69,10 +76,15 @@ function AddBookDrawer() {
     }
     const updatedBooks = [newBook, ...books]
 
+    toast({
+      title: "Hurray!",
+      description: "Your book was add to our records",
+    })
+
     form.trigger()
 
     setBooks(updatedBooks)
-    form.reset(defaultFormValues)
+    form.reset()
     setDrawerMode(null)
   }
 
@@ -98,11 +110,16 @@ function AddBookDrawer() {
     if (findBooks)
       Object.assign(findBooks, updatedBook)
 
+    toast({
+      title: "Book updated!",
+      description: "Your book was updated ans can be reviewd on the data table",
+    })
+
     setBooks(tempBooksArray)
     setDrawerMode(null)
   }
 
-  const fieldsInput: { name: FormSchemaKeys; label: string }[] = [
+  const fieldsInput: { name: string; label: string }[] = [
     { name: "title", label: "Title" },
     { name: "author", label: "Author" },
     { name: "genre", label: "Genre" },
@@ -127,9 +144,7 @@ function AddBookDrawer() {
       item="form"
       triggerButton={(
         <Button
-          onClick={() => {
-            setDrawerMode('form')
-          }}
+          onClick={() => setDrawerMode('form')}
           variant='secondary'
           className='flex gap-2'
         >
@@ -152,7 +167,7 @@ function AddBookDrawer() {
             <FormField
               key={idx}
               control={form.control}
-              name={name}
+              name={name as keyof z.infer<typeof formSchema>}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{label}</FormLabel>
@@ -273,4 +288,4 @@ function AddBookDrawer() {
   )
 }
 
-export default AddBookDrawer
+export default BookForm
