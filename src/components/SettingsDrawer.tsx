@@ -15,7 +15,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -159,36 +158,36 @@ function SettingsDrawer() {
         <DrawerTitle>Settings</DrawerTitle>
       </DrawerHeader>
 
-      <Section
-        title="Categories"
-        items={categories}
-        form={categoryForm}
-        selectedItem={selectedCategory}
-        setSelectedItem={setSelectedCategory}
-        onSubmit={(value) =>
-          handleFormSubmit(categories, setCategories, selectedCategory, setSelectedCategory, categoryForm, "category", value)
-        }
-        onEdit={(data) => handleEditItem(setSelectedCategory, categoryForm, "category", data)}
-        // removeItem={removeCategories}
-        removeItem={removeCat}
-        formField="category"
-      />
+      <div className="flex flex-col gap-6">
+        <Section
+          title="Categories"
+          items={categories}
+          form={categoryForm}
+          selectedItem={selectedCategory}
+          setSelectedItem={setSelectedCategory}
+          onSubmit={(value) =>
+            handleFormSubmit(categories, setCategories, selectedCategory, setSelectedCategory, categoryForm, "category", value)
+          }
+          onEdit={(data) => handleEditItem(setSelectedCategory, categoryForm, "category", data)}
+          // removeItem={removeCategories}
+          removeItem={removeCat}
+          formField="category"
+        />
 
-      <hr className="my-4" />
-
-      <Section
-        title="Tags"
-        items={tags}
-        form={tagForm}
-        selectedItem={selectedTag}
-        setSelectedItem={setSelectedTag}
-        onSubmit={(value) =>
-          handleFormSubmit(tags, setTags, selectedTag, setSelectedTag, tagForm, "tag", value)
-        }
-        onEdit={(data) => handleEditItem(setSelectedTag, tagForm, "tag", data)}
-        removeItem={removeTag}
-        formField="tag"
-      />
+        <Section
+          title="Tags"
+          items={tags}
+          form={tagForm}
+          selectedItem={selectedTag}
+          setSelectedItem={setSelectedTag}
+          onSubmit={(value) =>
+            handleFormSubmit(tags, setTags, selectedTag, setSelectedTag, tagForm, "tag", value)
+          }
+          onEdit={(data) => handleEditItem(setSelectedTag, tagForm, "tag", data)}
+          removeItem={removeTag}
+          formField="tag"
+        />
+      </div>
     </DrawerComponent>
   );
 }
@@ -225,9 +224,8 @@ const Section: React.FC<SectionProps> = ({
             name={formField}
             render={({ field }) => (
               <FormItem className="w-4/5">
-                <FormLabel>New {title.slice(0, -1)}</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} placeholder={`New ${title === 'Categories' ? 'Category' : 'Tag'}`} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -249,7 +247,7 @@ const Section: React.FC<SectionProps> = ({
         </Badge>
       ))}
     </div>
-    <span className="text-sm">Click on {title.slice(0, -1).toLowerCase()} to edit, or on X to remove</span>
+    <span className="text-[12px]">Click on the badge to edit, or on X to remove</span>
   </div>
 );
 
