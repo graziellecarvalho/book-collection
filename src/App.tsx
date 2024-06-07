@@ -5,6 +5,7 @@ import BookCollectionTable from '@/components/BookCollectionTable'
 import BookForm from './components/BookForm'
 import { useAppStore } from './store/appStore'
 import SettingsDrawer from './components/SettingsDrawer'
+import FilterDrawer from './components/FilterDrawer'
 
 function App() {
   const { fetchBooks, fetchCategories, fetchTags } = useBookCollectionStore()
@@ -22,6 +23,7 @@ function App() {
       <div className="flex justify-end py-4 gap-3">
         <BookForm />
         <SettingsDrawer />
+        <FilterDrawer />
       </div>
       <BookCollectionTable />
     </div>

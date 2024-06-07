@@ -3,6 +3,7 @@ import { BookCollectionProps, FetchedBookProps, CategoriesTagsProps } from '@/ty
 
 export interface BookCollectionState {
   books: BookCollectionProps[] | [];
+  filteredBooks: BookCollectionProps[] | [];
   categories: CategoriesTagsProps[];
   tags: CategoriesTagsProps[];
   selectedBook: BookCollectionProps;
@@ -23,6 +24,7 @@ export interface BookCollectionState {
   setTags: (tag: CategoriesTagsProps[]) => void;
   removeTags: (tag: string) => void;
   setSelectedTag: (tag: CategoriesTagsProps) => void
+  setFilter: (filter: BookCollectionProps[]) => void;
 }
 
 export const defaultFormValues: BookCollectionProps = {
@@ -37,6 +39,7 @@ export const defaultFormValues: BookCollectionProps = {
 
 export const useBookCollectionStore = create<BookCollectionState>((set, get) => ({
   books: [],
+  filteredBooks: [],
   categories: [],
   tags: [],
   selectedBook: defaultFormValues,
@@ -120,4 +123,6 @@ export const useBookCollectionStore = create<BookCollectionState>((set, get) => 
     set(() => ({ tags: remainingTags }))
   },
   setSelectedTag: (tag) => set({ selectedTag: tag }),
-}));
+  setFilter: (filter) => set({ filteredBooks: filter })
+  }
+));
