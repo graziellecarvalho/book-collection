@@ -42,7 +42,6 @@ import { ChevronsUpDown, Trash, Pencil } from "lucide-react"
 import { DotsHorizontalIcon, StarFilledIcon, StarIcon } from "@radix-ui/react-icons"
 import { useToast } from "@/components/ui/use-toast"
 import { Badge } from "./ui/badge"
-import { Input } from "./ui/input"
 
 interface ColumnType {
   toggleSorting: (isSorted: boolean) => void;
