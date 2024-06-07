@@ -5,6 +5,7 @@ export interface BookCollectionState {
   books: BookCollectionProps[] | [];
   selectedBook: BookCollectionProps;
   fetchBooks: () => void;
+  removeBook: (bookId: number) => void;
   setBooks: (booksArr: BookCollectionProps[]) => void;
   setSelectedBook: (bookObj: BookCollectionProps) => void;
 }
@@ -50,6 +51,12 @@ export const useBookCollectionStore = create<BookCollectionState>((set, get) => 
       .catch(error => console.log('Error retrieving Books', error))
     }
     
+  },
+  removeBook: (bookId) => {
+    const getBooks = get().books
+    const remainingBooks = getBooks.filter(player => player.id !== bookId)
+    localStorage.setItem("books", JSON.stringify(remainingBooks));
+    set(() => ({ books: remainingBooks }))
   },
   setBooks: (booksArr) => {
     localStorage.setItem("books", JSON.stringify(booksArr));
