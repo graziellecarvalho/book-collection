@@ -22,10 +22,13 @@ import { Input } from "@/components/ui/input";
 import { useBookCollectionStore } from "@/store/bookCollectionStore";
 import { CategoriesTagsProps } from "@/types";
 import uuid from 'react-uuid';
+import { useToast } from "@/components/ui/use-toast"
+import { cn } from "@/lib/utils";
 
 function SettingsDrawer() {
   const { setDrawerMode } = useAppStore();
   const {
+    books,
     setCategories,
     setTags,
     tags,
@@ -37,6 +40,8 @@ function SettingsDrawer() {
     selectedCategory,
     selectedTag,
   } = useBookCollectionStore();
+
+  const { toast } = useToast()
 
   const categorySchema = z.object({
     category: z
@@ -64,6 +69,36 @@ function SettingsDrawer() {
       category: "",
     },
   });
+
+  const removeCat = (id: string) => {4
+    if (books.find(book => book?.categories?.some(cat => cat.id === id)) !== undefined) {
+      toast({
+        title: "Careful!",
+        description: `Category "${categories.find(cat => cat.id === id)?.label}" is associated with a book`,
+        className: cn(
+          'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 text-start'
+        ),
+        variant: "destructive",
+      })
+    } else {
+      removeCategories(id)
+    }
+  }
+
+  const removeTag = (id: string) => {4
+    if (books.find(book => book?.tags?.some(tag => tag.id === id)) !== undefined) {
+      toast({
+        title: "Careful!",
+        description: `Tag "${tags.find(tag => tag.id === id)?.label}" is associated with a book`,
+        className: cn(
+          'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 text-start'
+        ),
+        variant: "destructive",
+      })
+    } else {
+      removeTags(id)
+    }
+  }
 
   const tagForm = useForm({
     resolver: zodResolver(tagSchema),
@@ -93,6 +128,8 @@ function SettingsDrawer() {
       const updatedItems = [result, ...items];
       setItems(updatedItems);
     }
+
+    form.trigger()
 
     setSelectedItem({ id: '', label: "" });
     form.setValue(field, "");
@@ -132,7 +169,8 @@ function SettingsDrawer() {
           handleFormSubmit(categories, setCategories, selectedCategory, setSelectedCategory, categoryForm, "category", value)
         }
         onEdit={(data) => handleEditItem(setSelectedCategory, categoryForm, "category", data)}
-        removeItem={removeCategories}
+        // removeItem={removeCategories}
+        removeItem={removeCat}
         formField="category"
       />
 
@@ -148,7 +186,7 @@ function SettingsDrawer() {
           handleFormSubmit(tags, setTags, selectedTag, setSelectedTag, tagForm, "tag", value)
         }
         onEdit={(data) => handleEditItem(setSelectedTag, tagForm, "tag", data)}
-        removeItem={removeTags}
+        removeItem={removeTag}
         formField="tag"
       />
     </DrawerComponent>

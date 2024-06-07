@@ -10,7 +10,7 @@ import { useAppStore } from "@/store/appStore"
 import { defaultFormValues, useBookCollectionStore } from "@/store/bookCollectionStore"
 import { X } from 'lucide-react';
 
-function DrawerComponent({ children, triggerButton, item }: { children: ReactNode, triggerButton: ReactNode, item: 'settings' | 'form' | null }) {
+function DrawerComponent({ children, triggerButton, item }: { children: ReactNode, triggerButton: ReactNode, item: 'settings' | 'form' | 'filter' | null }) {
   const { drawerMode, setDrawerMode } = useAppStore()
   const { setSelectedBook } = useBookCollectionStore()
 

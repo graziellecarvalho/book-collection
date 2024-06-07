@@ -28,7 +28,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { ChevronsUpDown, Trash, Pencil } from "lucide-react"
+import { DotsHorizontalIcon, StarFilledIcon, StarIcon } from "@radix-ui/react-icons"
+import { useToast } from "@/components/ui/use-toast"
+import { Badge } from "./ui/badge"
+import { Input } from "./ui/input"
 
 interface ColumnType {
   toggleSorting: (isSorted: boolean) => void;
@@ -58,15 +72,43 @@ export const columns: ColumnDef<BookCollectionProps>[] = [
   },
   {
     accessorKey: "rating",
-    header: ({ column }) => <ArrowUpDown title="Rating" column={column} />
+    header: ({ column }) => <ArrowUpDown title="Rating" column={column} />,
+    cell: ({ row }) => (
+      <>
+        {row.original.rating && (
+          <div className="flex">
+            {[...Array(Math.min(Math.max(row.original.rating, 1), 5))].map((_, index) => (
+              <StarFilledIcon key={index} />
+            ))}
+            {[...Array(Math.max(5 - row.original.rating, 0))].map((_, index) => (
+              <StarIcon key={index} />
+            ))}
+          </div>
+        )}
+      </>
+    )
   },
   {
     accessorKey: "categories",
-    header: "Categories"
+    header: "Categories",
+    cell: ({ row }) => (
+      <div className="flex gap-2">
+        {row.original.categories?.map((item) => (
+          <Badge variant="secondary" key={item.id}>{item.label}</Badge>
+        ))}
+      </div>
+    )
   },
   {
     accessorKey: "tags",
-    header: "Tags"
+    header: "Tags",
+    cell: ({ row }) => (
+      <div className="flex gap-2">
+        {row.original.tags?.map((item) => (
+          <Badge variant="secondary" key={item.id}>{item.label}</Badge>
+        ))}
+      </div>
+    )
   },
   {
     id: "actions",
@@ -78,33 +120,69 @@ const ContextMenu = ({ book }: { book: BookCollectionProps }) => {
   const { setSelectedBook, removeBook } = useBookCollectionStore()
   const { setDrawerMode } = useAppStore()
 
+  const [showAlertDialog, setShowAlertDialog] = useState(false)
+
+  const { toast } = useToast()
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-          Options
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Options</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          className="gap-2"
-          onClick={() => {
-            setDrawerMode('form')
-            setSelectedBook(book)
-          }}
-        >
-          <Pencil size="12" />Update
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className="gap-2"
-          onClick={() => removeBook(book.id)}
-        >
-          <Trash size="12" />Remove
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+            <DotsHorizontalIcon />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>Options</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            className="gap-2"
+            onClick={() => {
+              setDrawerMode('form')
+              setSelectedBook(book)
+            }}
+          >
+            <Pencil size="12" />Update
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="gap-2"
+            onClick={() => setShowAlertDialog(true)}
+          >
+            <Trash size="12" />Remove
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      {showAlertDialog && (
+        <AlertDialog open={showAlertDialog}>
+        
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete your
+                book and remove your data from our servers.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => setShowAlertDialog(false)}>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+              onClick={() => {
+                removeBook(book.id)
+                setShowAlertDialog(false)
+                toast({
+                  title: "Book removed",
+                  description: "Your book was removed from our records",
+                })
+              }}
+              >
+                Continue
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+        )}
+    </>
+    
   )
 }
 
@@ -115,7 +193,7 @@ const ContextMenu = ({ book }: { book: BookCollectionProps }) => {
  * @returns Button component
  */
 const ArrowUpDown = ({ title, column }: {title: string, column: ColumnType }) => (
-  <Button className="flex mx-auto" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} variant="ghost">
+  <Button className="flex justify-start" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} variant="ghost">
     {title}
     <ChevronsUpDown className="ml-2 h-4 w-4" />
   </Button>
@@ -145,21 +223,19 @@ function DataTable<TData, TValue>({
       {/* TABLE */}
       <div className="rounded-md border bg-white">
         <Table>
-          <TableHeader>
+          <TableHeader className="text-start">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  )
-                })}
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
@@ -169,6 +245,7 @@ function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  className="text-start"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -191,7 +268,10 @@ function DataTable<TData, TValue>({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => table.previousPage()}
+          onClick={() => {
+            table.previousPage()
+            console.log('table on prev', table.getPageCount())
+          }}
           disabled={!table.getCanPreviousPage()}
         >
           Previous
