@@ -1,11 +1,11 @@
 import { create } from 'zustand';
 
 interface AppState {
-  displayForm: boolean;
-  setDisplayForm: (val: boolean) => void
+  drawerMode: 'form' | 'settings' | null;
+  setDrawerMode: (val: 'form' | 'settings' | null) => void;
 }
 
 export const useAppStore = create<AppState>(set => ({
-  displayForm: false,
-  setDisplayForm: (val) => set(({ displayForm: val })),
+  drawerMode: null,
+  setDrawerMode: (val) => set({ drawerMode: val })
 }));

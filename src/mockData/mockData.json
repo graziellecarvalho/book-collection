@@ -41,9 +41,9 @@
     { "id": "crafts-hobbies", "label": "Crafts & Hobbies" }
   ],
   "tags": [
-    { "id": "fiction", "label": "Fiction" },
-    { "id": "non-fiction", "label": "Non-Fiction" },
-    { "id": "mystery", "label": "Mystery" },
-    { "id": "fantasy", "label": "Fantasy" }
+    { "id": "new-release", "label": "New Release" },
+    { "id": "100-top", "label": "100 Top" },
+    { "id": "most-recommended", "label": "Most Recommended" },
+    { "id": "booktok", "label": "booktok" }
   ]
 }

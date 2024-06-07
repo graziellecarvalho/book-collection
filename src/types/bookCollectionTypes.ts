@@ -1,5 +1,5 @@
 export interface BookProps {
-  id: number;
+  id: string;
   title: string;
   author: string;
   genre: string;
@@ -15,6 +15,11 @@ export interface FetchedBookProps extends BookProps {
 
 export interface BookCollectionProps extends BookProps {
   rating?: number;
-  categories?: string[];
-  tags?: string[];
+  categories?: CategoriesTagsProps[];
+  tags?: CategoriesTagsProps[];
+}
+
+export interface CategoriesTagsProps {
+  id: string;
+  label: string;
 }

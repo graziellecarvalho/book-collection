@@ -4,20 +4,24 @@ import { useBookCollectionStore } from '@/store/bookCollectionStore'
 import BookCollectionTable from '@/components/BookCollectionTable'
 import AddBookDrawer from './components/AddBookDrawer'
 import { useAppStore } from './store/appStore'
+import SettingsDrawer from './components/SettingsDrawer'
 
 function App() {
-  const { fetchBooks } = useBookCollectionStore()
-  const { displayForm } = useAppStore()
+  const { fetchBooks, fetchCategories, fetchTags } = useBookCollectionStore()
+  const { drawerMode } = useAppStore()
 
   useEffect(() => {
-    if (!displayForm)
+    if (drawerMode === null)
       fetchBooks()
-  }, [displayForm])
+      fetchCategories()
+      fetchTags()
+  }, [drawerMode])
 
   return (
     <div>
       <div className="flex justify-end py-4 gap-3">
         <AddBookDrawer />
+        <SettingsDrawer />
       </div>
       <BookCollectionTable />
     </div>
