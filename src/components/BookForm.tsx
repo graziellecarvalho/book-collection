@@ -23,6 +23,7 @@ import { useBookCollectionStore } from "@/store/bookCollectionStore"
 import { useAppStore } from "@/store/appStore"
 import DrawerComponent from "./DrawerComponent"
 import { useToast } from "@/components/ui/use-toast"
+import { Info } from "lucide-react"
 
 // type FormSchemaKeys = keyof z.infer<typeof formSchema>;
 
@@ -191,7 +192,7 @@ function BookForm() {
               <FormItem>
                 <FormLabel>Categories</FormLabel>
                 <ScrollArea className="h-52 w-full px-2 gap-2 rounded-md border">
-                  {categories.map((item) => (
+                  {categories.length !== 0 ? categories.map((item) => (
                     <FormField
                       key={item.id}
                       control={form.control}
@@ -223,7 +224,11 @@ function BookForm() {
                         )
                       }}
                     />
-                  ))}
+                  )) : (
+                    <div className="flex items-center gap-2">
+                      <Info size="12" /><span className="text-sm text-slate-500">Go to Settings and add some Categories before proceeding</span>
+                    </div>
+                  )}
                 </ScrollArea>
                 <FormMessage />
               </FormItem>
@@ -238,7 +243,7 @@ function BookForm() {
               <FormItem>
                 <FormLabel>Tags</FormLabel>
                 <ScrollArea className="h-52 w-full px-2 gap-2 rounded-md border">
-                  {tags.map((item) => (
+                  {tags.length !== 0 ? tags.map((item) => (
                     <FormField
                       key={item.id}
                       control={form.control}
@@ -270,7 +275,11 @@ function BookForm() {
                         )
                       }}
                     />
-                  ))}
+                  )) : (
+                    <div className="flex items-center gap-2">
+                      <Info size="12" /><span className="text-sm text-slate-500">Go to Settings and add some Tags before proceeding</span>
+                    </div>
+                  )}
                 </ScrollArea>
                 <FormMessage />
               </FormItem>
@@ -279,7 +288,7 @@ function BookForm() {
           {selectedBook.id !== '' ? (
             <Button onClick={(e) => onUpdateBook(e)}>Update</Button>
           ) : (
-            <Button type="submit">Submit</Button>
+            <Button type="submit" disabled={categories.length === 0 || tags.length === 0}>Submit</Button>
           )}
         </form>
       </Form>

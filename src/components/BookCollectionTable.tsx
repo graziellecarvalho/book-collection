@@ -268,10 +268,7 @@ function DataTable<TData, TValue>({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => {
-            table.previousPage()
-            console.log('table on prev', table.getPageCount())
-          }}
+          onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
           Previous

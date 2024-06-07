@@ -25,6 +25,7 @@ export interface BookCollectionState {
   removeTags: (tag: string) => void;
   setSelectedTag: (tag: CategoriesTagsProps) => void
   setFilter: (filter: BookCollectionProps[]) => void;
+  removeFilter: () => void;
 }
 
 export const defaultFormValues: BookCollectionProps = {
@@ -123,6 +124,11 @@ export const useBookCollectionStore = create<BookCollectionState>((set, get) => 
     set(() => ({ tags: remainingTags }))
   },
   setSelectedTag: (tag) => set({ selectedTag: tag }),
-  setFilter: (filter) => set({ filteredBooks: filter })
+  setFilter: (filter) => {
+    set({ filteredBooks: filter })
+  },
+  removeFilter: () => {
+    set({ filteredBooks: [] })
+  }
   }
 ));

@@ -1,5 +1,5 @@
 import { Button } from "./ui/button"
-import { BookPlus, Filter } from 'lucide-react'
+import { Filter } from 'lucide-react'
 import { useAppStore } from "@/store/appStore"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -28,10 +28,13 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Input } from './ui/input'
+import { useToast } from "@/components/ui/use-toast"
+import { cn } from "@/lib/utils";
 
 function FilterDrawer() {
   const { setDrawerMode } = useAppStore()
-  const { setFilter, categories, tags, books, setBooks } = useBookCollectionStore()
+  const { setFilter, categories, tags, books, removeFilter } = useBookCollectionStore()
+  const { toast } = useToast()
 
   // Fields Validation
   const filterSchema = z.object({
@@ -75,30 +78,41 @@ function FilterDrawer() {
         filter = tempBooks.filter(book => book.tags?.some(item => item.id === value.tags))
         break;
     }
+
+    console.log(filter)
+    if (filter.length === 0) {
+      toast({
+        title: "Oh no!",
+        description: `No books where found with that filter`,
+        className: cn(
+          'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 text-start'
+        ),
+      })
+    }
     setFilter(filter)
   }
 
   const onRemoveFilter = () => {
-    setBooks(books)
+    removeFilter()
+    form.reset()
   }
 
   const selectedType = form.watch("type")
 
   return (
-    <Collapsible>
+    <Collapsible className="relative">
       <CollapsibleTrigger className="flex items-center text-sm py-2 px-4 gap-2 bg-[#f4f4f5] rounded-md" type="button" onClick={() => setDrawerMode('filter')}>
-        {/* <Button onClick={() => setDrawerMode('filter')}> */}
           <Filter size={16} />
           Filter
         {/* </Button> */}
       </CollapsibleTrigger>
-      <CollapsibleContent className="relative h-[105px]">
-        <div className="absolute top-2 w-[600px] h-[105px] bg-white right-0 rounded-lg">
+      <CollapsibleContent className="md:relative absoltute md:h-[105px]">
+        <div className="flex items-end absolute top-2 md:w-[600px] w-92 md:h-[105px] bg-white right-0 rounded-lg md:shadow-none shadow-2xl md:top-2 top-10" style={{ zIndex: '20' }}>
           {/* FORM */}
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onFilter)}
-              className="px-2 flex items-end m-0 py-4 gap-2"
+              className="px-2 flex md:flex-row flex-col items-end m-0 py-4 gap-2"
             >
               {/* SELECT - TYPE */}
               <FormField
@@ -219,8 +233,8 @@ function FilterDrawer() {
                 `}
               </style>
               <Button type="submit">Filter</Button>
-              <Button variant="secondary" onClick={onRemoveFilter}>Remove</Button>
             </form>
+            <Button variant="secondary" className="mb-4" onClick={onRemoveFilter}>Remove</Button>
           </Form>
         </div>
       </CollapsibleContent>

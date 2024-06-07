@@ -29,7 +29,7 @@ function DrawerComponent({ children, triggerButton, item }: { children: ReactNod
       </DrawerTrigger>
 
       {/* DRAWER CONTENT */}
-      <DrawerContent className='h-screen left-auto mt-0 w-[500px] rounded-none px-4'>
+      <DrawerContent className='h-screen left-auto mt-0 md:w-[500px] w-96 rounded-none px-4'>
         <DrawerClose className="w-fit flex items-center" onClick={closeDrawer}>
           <X size={12} />Close
         </DrawerClose>
