@@ -70,14 +70,13 @@ export const columns: ColumnDef<BookCollectionProps>[] = [
   },
   {
     id: "actions",
-    header: "Tags",
     cell: ({ row }) => <ContextMenu book={row.original} />,
   },
 ]
 
 const ContextMenu = ({ book }: { book: BookCollectionProps }) => {
   const { setSelectedBook, removeBook } = useBookCollectionStore()
-  const { setDisplayForm } = useAppStore()
+  const { setDrawerMode } = useAppStore()
 
   return (
     <DropdownMenu>
@@ -92,7 +91,7 @@ const ContextMenu = ({ book }: { book: BookCollectionProps }) => {
         <DropdownMenuItem
           className="gap-2"
           onClick={() => {
-            setDisplayForm(true)
+            setDrawerMode('form')
             setSelectedBook(book)
           }}
         >

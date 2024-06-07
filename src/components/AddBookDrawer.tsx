@@ -1,11 +1,5 @@
 import React, { useEffect } from "react"
-import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer"
+import { DrawerHeader, DrawerTitle } from "@/components/ui/drawer"
 import { Button } from "./ui/button"
 import { BookPlus } from 'lucide-react'
 import { z } from "zod"
@@ -23,10 +17,11 @@ import { Input } from "@/components/ui/input"
 import { Checkbox } from "./ui/checkbox"
 import { ScrollArea } from "./ui/scroll-area"
 import { BookCollectionProps } from "@/types"
-import mockData from '../mockData/mockData.json'
+import uuid from 'react-uuid';
 
-import { useBookCollectionStore, defaultFormValues } from "@/store/bookCollectionStore"
+import { useBookCollectionStore } from "@/store/bookCollectionStore"
 import { useAppStore } from "@/store/appStore"
+import DrawerComponent from "./DrawerComponent"
 
 type FormSchemaKeys = keyof z.infer<typeof formSchema>;
 
@@ -36,8 +31,8 @@ const formSchema = z.object({
   author: z.string().min(3).max(50),
   genre: z.string().min(3).max(50),
   rating: z.coerce.number().min(1).max(5),
-  categories: z.array(z.string()).refine((value) => value.some((item) => item), {
-    message: "You have to select at least one category.",
+  categories: z.array(z.string()).refine((val => val.length > 0), {
+    message: 'You have to select at least one category.',
   }),
   tags: z.array(z.string()).refine((value) => value.some((item) => item), {
     message: "You have to select at least one tag.",
@@ -45,18 +40,32 @@ const formSchema = z.object({
 })
 
 function AddBookDrawer() {
-  const { books, setSelectedBook, setBooks, selectedBook } = useBookCollectionStore()
-  const { displayForm, setDisplayForm } = useAppStore()
+  const { books, setBooks, selectedBook, categories, tags } = useBookCollectionStore()
+  const { drawerMode, setDrawerMode } = useAppStore()
+
+  const defaultFormValues = {
+    categories: [],
+    tags: [],
+    title: "",
+    author: "",
+    genre: "",
+    rating: 5,
+  };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: defaultFormValues
   })
 
-  function onSubmit(values: Omit<BookCollectionProps, 'id'>) {
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    const selectedCategories = categories.filter(category => values.categories.includes(category.label))
+    const selectedTags = tags.filter(tag => values.tags.includes(tag.label))
+
     const newBook: BookCollectionProps = {
       ...values,
-      id: books.length + 1,
+      id: uuid(),
+      categories: selectedCategories,
+      tags: selectedTags,
     }
     const updatedBooks = [newBook, ...books]
 
@@ -64,21 +73,24 @@ function AddBookDrawer() {
 
     setBooks(updatedBooks)
     form.reset(defaultFormValues)
-    setDisplayForm(false)
+    setDrawerMode(null)
   }
 
   const onUpdateBook = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
 
     const formValues = form.getValues()
+    const updatedCategories = categories.filter(category => formValues.categories.includes(category.label))
+    const updatedTags = tags.filter(tag => formValues.tags.includes(tag.label))
+
     const updatedBook = {
       id: selectedBook.id,
       title: formValues.title,
       author: formValues.author,
       genre: formValues.genre,
       rating: formValues.rating,
-      categories: formValues.categories,
-      tags: formValues.tags
+      categories: updatedCategories,
+      tags: updatedTags
     }
     const tempBooksArray = books
     const findBooks = tempBooksArray.find(book => book.id === selectedBook.id)
@@ -87,7 +99,7 @@ function AddBookDrawer() {
       Object.assign(findBooks, updatedBook)
 
     setBooks(tempBooksArray)
-    setDisplayForm(false)
+    setDrawerMode(null)
   }
 
   const fieldsInput: { name: FormSchemaKeys; label: string }[] = [
@@ -97,171 +109,167 @@ function AddBookDrawer() {
     { name: "rating", label: "Rating" },
   ]
 
-  const closeDrawer = () => {
-    setDisplayForm(false)
-    setSelectedBook({ ...defaultFormValues, id: -1 })
-  }
-
   useEffect(() => {
-    if (selectedBook.id !== -1 && displayForm) {
+    if (selectedBook.id !== '' && drawerMode === 'form') {
       form.setValue("title", selectedBook.title)
       form.setValue("author", selectedBook.author)
       form.setValue("genre", selectedBook.genre)
       selectedBook.rating !== undefined && form.setValue("rating", selectedBook.rating)
-      selectedBook.categories !== undefined && form.setValue("categories", selectedBook.categories)
-      selectedBook.tags !== undefined && form.setValue("tags", selectedBook.tags)
+      selectedBook.categories !== undefined && form.setValue("categories", selectedBook.categories.map(item => item.label))
+      selectedBook.tags !== undefined && form.setValue("tags", selectedBook.tags.map(item => item.label))
     } else {
       form.reset()
     }
-  }, [displayForm])
+  }, [drawerMode])
 
   return (
-    <Drawer direction='right' open={displayForm} onClose={closeDrawer} onOpenChange={setDisplayForm} >
-      {/* OPEN DRAWER */}
-      <DrawerTrigger asChild>
-        <Button onClick={() => setDisplayForm(true)} variant='secondary' className='flex gap-2'>
+    <DrawerComponent
+      item="form"
+      triggerButton={(
+        <Button
+          onClick={() => {
+            setDrawerMode('form')
+          }}
+          variant='secondary'
+          className='flex gap-2'
+        >
           <BookPlus size={18} />
           Add Book
         </Button>
-      </DrawerTrigger>
+      )}
+    >
+      <>
+      <DrawerHeader className="px-0">
+        <DrawerTitle>{selectedBook.id !== '' ? 'Update Book' : 'Add Book'}</DrawerTitle>
+      </DrawerHeader>
 
-      {/* DRAWER CONTENT */}
-      <DrawerContent className='h-screen top-0 right-0 left-auto mt-0 w-[500px] rounded-none px-4'>
-        <ScrollArea>
-          <DrawerHeader className="px-0">
-            <DrawerTitle>{selectedBook.id !== -1 ? 'Update Book' : 'Add Book'}</DrawerTitle>
-          </DrawerHeader>
-
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-4 px-2"
-            >
-              {fieldsInput.map(({ name, label }, idx) => (
-                <FormField
-                  key={idx}
-                  control={form.control}
-                  name={name}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{label}</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder={`Inform ${name.toLocaleLowerCase()}`}
-                          onError={() => 'hello'}
-                          onErrorCapture={() => 'hello'}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ))}
-
-              {/* CATEGORIES */}
-              <FormField
-                control={form.control}
-                name="categories"
-                render={() => (
-                  <FormItem>
-                    <FormLabel>Categories</FormLabel>
-                    <ScrollArea className="h-52 w-full px-2 gap-2 rounded-md border">
-                      {mockData.categories.map((item) => (
-                        <FormField
-                          key={item.id}
-                          control={form.control}
-                          name="categories"
-                          render={({ field }) => {
-                            return (
-                              <FormItem
-                                key={item.id}
-                                className="flex flex-row items-center my-2"
-                              >
-                                <FormControl>
-                                  <Checkbox
-                                    checked={field.value?.includes(item.id)}
-                                    onCheckedChange={(checked) => {
-                                      return checked
-                                        ? field.onChange([...field.value, item.id])
-                                        : field.onChange(
-                                          field.value?.filter(
-                                            (value) => value !== item.id
-                                          )
-                                        )
-                                    }}
-                                  />
-                                </FormControl>
-                                <FormLabel style={{ margin: 0 }} className="text-sm font-normal px-2 ">
-                                  {item.label}
-                                </FormLabel>
-                              </FormItem>
-                            )
-                          }}
-                        />
-                      ))}
-                    </ScrollArea>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* TAGS */}
-              <FormField
-                control={form.control}
-                name="tags"
-                render={() => (
-                  <FormItem>
-                    <FormLabel>Tags</FormLabel>
-                    <ScrollArea className="h-52 w-full px-2 gap-2 rounded-md border">
-                      {mockData.tags.map((item) => (
-                        <FormField
-                          key={item.id}
-                          control={form.control}
-                          name="tags"
-                          render={({ field }) => {
-                            return (
-                              <FormItem
-                                key={item.id}
-                                className="flex flex-row items-center my-2"
-                              >
-                                <FormControl>
-                                  <Checkbox
-                                    checked={field.value?.includes(item.id)}
-                                    onCheckedChange={(checked) => {
-                                      return checked
-                                        ? field.onChange([...field.value, item.id])
-                                        : field.onChange(
-                                          field.value?.filter(
-                                            (value) => value !== item.id
-                                          )
-                                        )
-                                    }}
-                                  />
-                                </FormControl>
-                                <FormLabel style={{ margin: 0 }} className="text-sm font-normal px-2 ">
-                                  {item.label}
-                                </FormLabel>
-                              </FormItem>
-                            )
-                          }}
-                        />
-                      ))}
-                    </ScrollArea>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {selectedBook.id !== -1 ? (
-                <Button onClick={(e) => onUpdateBook(e)}>Update</Button>
-              ) : (
-                <Button type="submit">Submit</Button>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-4 px-2"
+        >
+          {fieldsInput.map(({ name, label }, idx) => (
+            <FormField
+              key={idx}
+              control={form.control}
+              name={name}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{label}</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder={`Inform ${name.toLocaleLowerCase()}`}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
-            </form>
-          </Form>
-        </ScrollArea>
-      </DrawerContent>
-    </Drawer>
+            />
+          ))}
+
+          {/* CATEGORIES */}
+          <FormField
+            control={form.control}
+            name="categories"
+            render={() => (
+              <FormItem>
+                <FormLabel>Categories</FormLabel>
+                <ScrollArea className="h-52 w-full px-2 gap-2 rounded-md border">
+                  {categories.map((item) => (
+                    <FormField
+                      key={item.id}
+                      control={form.control}
+                      name="categories"
+                      render={({ field }) => {
+                        return (
+                          <FormItem
+                            key={item.id}
+                            className="flex flex-row items-center my-2"
+                          >
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value?.includes(item.label)}
+                                onCheckedChange={(checked) => {
+                                  return checked
+                                    ? field.onChange([...field.value, item.label])
+                                    : field.onChange(
+                                      field.value?.filter(
+                                        (value) => value !== item.label
+                                      )
+                                    )
+                                }}
+                              />
+                            </FormControl>
+                            <FormLabel style={{ margin: 0 }} className="text-sm font-normal px-2 ">
+                              {item.label}
+                            </FormLabel>
+                          </FormItem>
+                        )
+                      }}
+                    />
+                  ))}
+                </ScrollArea>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* TAGS */}
+          <FormField
+            control={form.control}
+            name="tags"
+            render={() => (
+              <FormItem>
+                <FormLabel>Tags</FormLabel>
+                <ScrollArea className="h-52 w-full px-2 gap-2 rounded-md border">
+                  {tags.map((item) => (
+                    <FormField
+                      key={item.id}
+                      control={form.control}
+                      name="tags"
+                      render={({ field }) => {
+                        return (
+                          <FormItem
+                            key={item.id}
+                            className="flex flex-row items-center my-2"
+                          >
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value?.includes(item.label)}
+                                onCheckedChange={(checked) => {
+                                  return checked
+                                    ? field.onChange([...field.value, item.label])
+                                    : field.onChange(
+                                      field.value?.filter(
+                                        (value) => value !== item.label
+                                      )
+                                    )
+                                }}
+                              />
+                            </FormControl>
+                            <FormLabel style={{ margin: 0 }} className="text-sm font-normal px-2 ">
+                              {item.label}
+                            </FormLabel>
+                          </FormItem>
+                        )
+                      }}
+                    />
+                  ))}
+                </ScrollArea>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {selectedBook.id !== '' ? (
+            <Button onClick={(e) => onUpdateBook(e)}>Update</Button>
+          ) : (
+            <Button type="submit">Submit</Button>
+          )}
+        </form>
+      </Form>
+      </>
+    </DrawerComponent>
   )
 }
 
