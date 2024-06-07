@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useBookCollectionStore } from "@/store/bookCollectionStore"
-import { ChevronsUpDown } from "lucide-react"
+import { useAppStore } from "@/store/appStore"
 import {
   ColumnDef,
   SortingState,
@@ -20,6 +20,15 @@ import {
 } from "@/components/ui/table"
 import { BookCollectionProps } from "@/types"
 import { Button } from "./ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { ChevronsUpDown, Trash, Pencil } from "lucide-react"
 
 interface ColumnType {
   toggleSorting: (isSorted: boolean) => void;
@@ -59,7 +68,46 @@ export const columns: ColumnDef<BookCollectionProps>[] = [
     accessorKey: "tags",
     header: "Tags"
   },
+  {
+    id: "actions",
+    header: "Tags",
+    cell: ({ row }) => <ContextMenu book={row.original} />,
+  },
 ]
+
+const ContextMenu = ({ book }: { book: BookCollectionProps }) => {
+  const { setSelectedBook } = useBookCollectionStore()
+  const { setDisplayForm } = useAppStore()
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+          Options
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuLabel>Options</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          className="gap-2"
+          onClick={() => {
+            setDisplayForm(true)
+            setSelectedBook(book)
+          }}
+        >
+          <Pencil size="12" />Update
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className="gap-2"
+          onClick={() => console.log('remove')}
+        >
+          <Trash size="12" />Remove
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
 
 /**
  * Sorting functionality for the tables headers
