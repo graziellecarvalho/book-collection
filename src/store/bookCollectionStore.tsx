@@ -46,6 +46,7 @@ export const useBookCollectionStore = create<BookCollectionState>((set, get) => 
   selectedBook: defaultFormValues,
   selectedCategory: { id: '', label: '' },
   selectedTag: { id: '', label: '' },
+  // Will fetch books in localstorage or api
   fetchBooks: () => {
     const fetchAmount = 4
     const getBookLocally = localStorage.getItem("books");
@@ -55,44 +56,48 @@ export const useBookCollectionStore = create<BookCollectionState>((set, get) => 
       set(() => ({ books: JSON.parse(getBookLocally) }))
     } else {
       fetch(`https://fakerapi.it/api/v1/books?_quantity=${fetchAmount}`, { method: 'GET' })
-      .then(response => response.json())
-      .then(({ data }: { data: FetchedBookProps[] }) => {
-        // Fetching books from API
-        const filteredBooks: BookCollectionProps[] = data.map(({ id, title, author, genre }) => ({
-          id,
-          title,
-          author,
-          genre,
-          rating: 0,
-          categories: [],
-          tags: []
-        }))
+        .then(response => response.json())
+        .then(({ data }: { data: FetchedBookProps[] }) => {
+          // Fetching books from API
+          const filteredBooks: BookCollectionProps[] = data.map(({ id, title, author, genre }) => ({
+            id,
+            title,
+            author,
+            genre,
+            rating: 0,
+            categories: [],
+            tags: []
+          }))
 
-        // Adding data into state
-        set(() => ({ books: filteredBooks }))
-      })
-      .catch(error => console.log('Error retrieving Books', error))
+          // Adding data into state
+          set(() => ({ books: filteredBooks }))
+        })
+        .catch(error => console.log('Error retrieving Books', error))
     }
-    
+
   },
+  // Remove book from list
   removeBook: (bookId) => {
     const getBooks = get().books
     const remainingBooks = getBooks.filter(book => book.id !== bookId)
     localStorage.setItem("books", JSON.stringify(remainingBooks));
     set(() => ({ books: remainingBooks }))
   },
+  // Function to set the array of books
   setBooks: (booksArr) => {
     localStorage.setItem("books", JSON.stringify(booksArr));
     set(() => ({ books: booksArr }));
   },
+  // Function that will have the clicked book object  
   setSelectedBook: (bookObj) => {
     set({ selectedBook: bookObj })
   },
+  // Will fetch categories in localstorage
   fetchCategories: () => {
     const getCategoriesLocally = localStorage.getItem("categories");
 
-    if(getCategoriesLocally !== null) {
-      set(() => ({ categories: JSON.parse(getCategoriesLocally)}))
+    if (getCategoriesLocally !== null) {
+      set(() => ({ categories: JSON.parse(getCategoriesLocally) }))
     }
   },
   setCategories: (categories) => {
@@ -106,11 +111,12 @@ export const useBookCollectionStore = create<BookCollectionState>((set, get) => 
     set(() => ({ categories: remainingCategories }))
   },
   setSelectedCategory: (category) => set({ selectedCategory: category }),
+  // Will fetch tags in localstorage
   fetchTags: () => {
     const getTagsLocally = localStorage.getItem("tags");
 
-    if(getTagsLocally !== null) {
-      set(() => ({ tags: JSON.parse(getTagsLocally)}))
+    if (getTagsLocally !== null) {
+      set(() => ({ tags: JSON.parse(getTagsLocally) }))
     }
   },
   setTags: (tags) => {
@@ -130,5 +136,5 @@ export const useBookCollectionStore = create<BookCollectionState>((set, get) => 
   removeFilter: () => {
     set({ filteredBooks: [] })
   }
-  }
+}
 ));

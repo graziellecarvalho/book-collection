@@ -24,8 +24,7 @@ import { useAppStore } from "@/store/appStore"
 import DrawerComponent from "./DrawerComponent"
 import { useToast } from "@/components/ui/use-toast"
 import { Info } from "lucide-react"
-
-// type FormSchemaKeys = keyof z.infer<typeof formSchema>;
+import { cn } from "@/lib/utils";
 
 function BookForm() {
   const { books, setBooks, selectedBook, categories, tags } = useBookCollectionStore()
@@ -80,6 +79,9 @@ function BookForm() {
     toast({
       title: "Hurray!",
       description: "Your book was add to our records",
+      className: cn(
+        'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 text-start'
+      ),
     })
 
     form.trigger()
@@ -114,6 +116,9 @@ function BookForm() {
     toast({
       title: "Book updated!",
       description: "Your book was updated ans can be reviewd on the data table",
+      className: cn(
+        'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 text-start'
+      ),
     })
 
     setBooks(tempBooksArray)

@@ -42,7 +42,7 @@ import { ChevronsUpDown, Trash, Pencil } from "lucide-react"
 import { DotsHorizontalIcon, StarFilledIcon, StarIcon } from "@radix-ui/react-icons"
 import { useToast } from "@/components/ui/use-toast"
 import { Badge } from "./ui/badge"
-import { Input } from "./ui/input"
+import { cn } from "@/lib/utils";
 
 interface ColumnType {
   toggleSorting: (isSorted: boolean) => void;
@@ -172,6 +172,9 @@ const ContextMenu = ({ book }: { book: BookCollectionProps }) => {
                 toast({
                   title: "Book removed",
                   description: "Your book was removed from our records",
+                  className: cn(
+                    'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 text-start'
+                  ),
                 })
               }}
               >
