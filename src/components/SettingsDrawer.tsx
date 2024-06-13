@@ -1,28 +1,9 @@
-import {
-  DrawerHeader,
-  DrawerTitle,
-} from "@/components/ui/drawer";
 import { Settings, X } from "lucide-react";
-import { useAppStore } from "@/store/appStore";
-import DrawerComponent from "./DrawerComponent";
-import { Button } from "./ui/button";
-import { Badge } from "./ui/badge";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, UseFormReturn } from "react-hook-form";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useBookCollectionStore } from "@/store/bookCollectionStore";
 import { CategoriesTagsProps } from "@/types";
-import uuid from 'react-uuid';
-import { useToast } from "@/components/ui/use-toast"
 import { cn } from "@/lib/utils";
+import { z } from "zod"
 
 function SettingsDrawer() {
   const { setDrawerMode } = useAppStore();

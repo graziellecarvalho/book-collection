@@ -1,6 +1,3 @@
-import { useState } from "react"
-import { useBookCollectionStore } from "@/store/bookCollectionStore"
-import { useAppStore } from "@/store/appStore"
 import {
   ColumnDef,
   SortingState,
@@ -10,39 +7,9 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
 import { BookCollectionProps } from "@/types"
-import { Button } from "./ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
 import { ChevronsUpDown, Trash, Pencil } from "lucide-react"
 import { DotsHorizontalIcon, StarFilledIcon, StarIcon } from "@radix-ui/react-icons"
-import { useToast } from "@/components/ui/use-toast"
-import { Badge } from "./ui/badge"
-import { Input } from "./ui/input"
 
 interface ColumnType {
   toggleSorting: (isSorted: boolean) => void;
