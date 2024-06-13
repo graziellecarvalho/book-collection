@@ -30,32 +30,48 @@ import {
 import { Input } from './ui/input'
 import { useToast } from "@/components/ui/use-toast"
 import { cn } from "@/lib/utils";
+import { useState } from "react"
 
 function FilterDrawer() {
   const { setDrawerMode } = useAppStore()
   const { setFilter, categories, tags, books, removeFilter } = useBookCollectionStore()
   const { toast } = useToast()
 
+  const [selectedTypeState, setSelectedTypeState] = useState('')
+
   // Fields Validation
   const filterSchema = z.object({
     type: z.string({ required_error: "Please select an item" }),
-    value: z.string().min(3, { message: 'At least 3 character(s)' }).max(50),
-    ratingValue: z.coerce.number(),
-    categories: z.string({ required_error: "Please select an item" }),
-    tags: z.string({ required_error: "Please select an item" }),
+    value: z.string().min(3, { message: 'At least 3 character(s)' }).max(50).optional(),
+    ratingValue: z.coerce.number().optional(),
+    categories: z.string({ required_error: "Please select an item" }).optional(),
+    tags: z.string({ required_error: "Please select an item" }).optional(),
   })
 
-  const defaultFormValues = {
-    type: "",
-    value: '',
-    ratingValue: 0,
-    categories: '',
-    tags: ''
-  };
+  const defaultFormValues = (type: string) => {
+    let returnedValues = {}
+    switch (type) {
+      case "title":
+      case "author":
+      case "genre":
+        returnedValues = { type, value: '' }
+        break
+      case 'rating':
+        returnedValues = { type, ratingValue: 0 }
+        break;
+      case 'categories':
+        returnedValues = { type, categories: '' }
+        break;
+      case 'tags':
+        returnedValues = { type, tags: '' }
+        break;
+    }
+    return returnedValues;
+  }
 
   const form = useForm<z.infer<typeof filterSchema>>({
     resolver: zodResolver(filterSchema),
-    defaultValues: defaultFormValues
+    defaultValues: defaultFormValues(selectedTypeState)
   })
 
   function onFilter(value: z.infer<typeof filterSchema>) {
@@ -66,7 +82,7 @@ function FilterDrawer() {
       case "title":
       case "author":
       case "genre":
-        filter = tempBooks.filter(book => (book[value.type as keyof BookCollectionProps] as string).toLowerCase().includes(value.value.toLowerCase() as string));
+        filter = tempBooks.filter(book => (book[value.type as keyof BookCollectionProps] as string).toLowerCase().includes(value?.value?.toLowerCase() as string));
         break
       case 'rating':
         filter = tempBooks.filter(book => book.rating === value.ratingValue);
@@ -79,7 +95,6 @@ function FilterDrawer() {
         break;
     }
 
-    console.log(filter)
     if (filter.length === 0) {
       toast({
         title: "Oh no!",
@@ -97,7 +112,6 @@ function FilterDrawer() {
     form.reset()
   }
 
-  const selectedType = form.watch("type")
 
   return (
     <Collapsible className="relative">
@@ -121,7 +135,13 @@ function FilterDrawer() {
                 render={({ field }) => (
                   <FormItem className="flex flex-col items-start relative form-fields">
                     <FormLabel>Type</FormLabel>
-                    <Select onValueChange={field.onChange}>
+                    <Select
+                      onValueChange={(e) => {
+                        setSelectedTypeState(e)
+                        field.onChange()
+                        form.reset(defaultFormValues(e))
+                      }}
+                    >
                       <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Filter By" />
                       </SelectTrigger>
@@ -138,7 +158,7 @@ function FilterDrawer() {
                 )}
               />
 
-              {['title', 'author', 'genre'].includes(selectedType) && (
+              {['title', 'author', 'genre'].includes(selectedTypeState) && (
                 <FormField
                   control={form.control}
                   name='value'
@@ -158,7 +178,7 @@ function FilterDrawer() {
                 />
               )}
 
-              {selectedType === 'rating' && (
+              {selectedTypeState === 'rating' && (
                 <FormField
                   control={form.control}
                   name='ratingValue'
@@ -168,6 +188,7 @@ function FilterDrawer() {
                       <FormControl>
                         <Input
                           {...field}
+                          value={field.value !== undefined ? field.value : 0}
                           onChange={field.onChange}
                         />
                       </FormControl>
@@ -177,7 +198,7 @@ function FilterDrawer() {
                 />
               )}
 
-              {selectedType === 'categories' && (
+              {selectedTypeState === 'categories' && (
                 <FormField
                   control={form.control}
                   name="categories"
@@ -199,7 +220,7 @@ function FilterDrawer() {
                 />
               )}
 
-              {selectedType === 'tags' && (
+              {selectedTypeState === 'tags' && (
                 <FormField
                   control={form.control}
                   name="tags"
