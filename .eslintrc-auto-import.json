@@ -98,6 +98,7 @@
     "useBookCollectionStore": true,
     "useCounterStore": true,
     "useFormField": true,
-    "useToast": true
+    "useToast": true,
+    "testing": true
   }
 }

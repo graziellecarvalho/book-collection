@@ -10,22 +10,19 @@ export default defineConfig({
     AutoImport({ 
       include: [
         /\.[tj]sx?$/, // .ts, .tsx, .js, .jsx
-        /\.json$/, // .json
-        /\.ts$/, // .ts
       ],
       // global imports to register
-      imports: [],
+      imports: [
+        {
+          "react-uuid": [["default", "uuid"]],
+          "react": ['useState', 'useEffect', 'React', 'ReactNode'],
+        },
+      ],
       dirs: [
         './src/**',
       ],
-      eslintrc: {
-        enabled: true, // Default `false`
-        filepath: './.eslintrc-auto-import.json', // Default `./.eslintrc-auto-import.json`
-        globalsPropValue: true, // Default `true`, (true | false | 'readonly' | 'readable' | 'writable' | 'writeable')
-      },
       // Enable auto import by filename for default module exports under directories
-      defaultExportByFilename: false,
-      // dts: './auto-imports.d.ts',
+      defaultExportByFilename: true,
       dts: true
     }),
   ],

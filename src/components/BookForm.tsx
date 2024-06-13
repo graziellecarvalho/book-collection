@@ -1,31 +1,9 @@
-import React, { useEffect } from "react"
-import { DrawerHeader, DrawerTitle } from "@/components/ui/drawer"
-import { Button } from "./ui/button"
 import { BookPlus } from 'lucide-react'
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Checkbox } from "./ui/checkbox"
-import { ScrollArea } from "./ui/scroll-area"
 import { BookCollectionProps } from "@/types"
-import uuid from 'react-uuid';
-
-import { useBookCollectionStore } from "@/store/bookCollectionStore"
-import { useAppStore } from "@/store/appStore"
-import DrawerComponent from "./DrawerComponent"
-import { useToast } from "@/components/ui/use-toast"
 import { Info } from "lucide-react"
-
-// type FormSchemaKeys = keyof z.infer<typeof formSchema>;
 
 function BookForm() {
   const { books, setBooks, selectedBook, categories, tags } = useBookCollectionStore()

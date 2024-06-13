@@ -61,6 +61,8 @@ declare global {
   const FormMessage: typeof import('./src/components/ui/form')['FormMessage']
   const Input: typeof import('./src/components/ui/input')['Input']
   const Label: typeof import('./src/components/ui/label')['Label']
+  const React: typeof import('react')['React']
+  const ReactNode: typeof import('react')['ReactNode']
   const ScrollArea: typeof import('./src/components/ui/scroll-area')['ScrollArea']
   const ScrollBar: typeof import('./src/components/ui/scroll-area')['ScrollBar']
   const Select: typeof import('./src/components/ui/select')['Select']
@@ -100,6 +102,9 @@ declare global {
   const useAppStore: typeof import('./src/store/appStore')['useAppStore']
   const useBookCollectionStore: typeof import('./src/store/bookCollectionStore')['useBookCollectionStore']
   const useCounterStore: typeof import('./src/store/countStore')['useCounterStore']
+  const useEffect: typeof import('react')['useEffect']
   const useFormField: typeof import('./src/components/ui/form')['useFormField']
+  const useState: typeof import('react')['useState']
   const useToast: typeof import('./src/components/ui/use-toast')['useToast']
+  const uuid: typeof import('react-uuid')['default']
 }
