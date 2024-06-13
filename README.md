@@ -1,4 +1,20 @@
-# Book Collection
+# Book Collection - Develop
+
+### Develop branch
+
+This branch will have upcomming implementations, such as:
+
+[ ] Managing multiple collections
+[ ] Adding user authentication
+[ ] Favoriting books
+[ ] Importing/exporting books
+[ ] Progress tracking
+[ ] Light/Dark mode
+[ ] User bio
+[ ] Author bio
+[x] Improve book filtering
+[x] Implement Auto import package
+
 
 The Book Collection Catalog is a digital system designed to organize, catalog, and manage your personal collection of books. This project aims to provide a user-friendly interface for adding, viewing, and categorizing books, making it easy to keep track of a growing collection.
 

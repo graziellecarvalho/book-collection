@@ -1,13 +1,4 @@
-import {
-  Drawer,
-  DrawerContent,
-  DrawerTrigger,
-  DrawerClose
-} from "@/components/ui/drawer"
-import { ScrollArea } from "./ui/scroll-area"
 import { ReactNode } from "react"
-import { useAppStore } from "@/store/appStore"
-import { defaultFormValues, useBookCollectionStore } from "@/store/bookCollectionStore"
 import { X } from 'lucide-react';
 
 function DrawerComponent({ children, triggerButton, item }: { children: ReactNode, triggerButton: ReactNode, item: 'settings' | 'form' | 'filter' | null }) {
