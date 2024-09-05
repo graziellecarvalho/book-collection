@@ -1,9 +1,11 @@
+import React from 'react'
 import { BookPlus } from 'lucide-react'
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { BookCollectionProps } from "@/types"
 import { Info } from "lucide-react"
+import FORM from '../formValidation/bookForm'
 
 function BookForm() {
   const { books, setBooks, selectedBook, categories, tags } = useBookCollectionStore()
@@ -13,14 +15,14 @@ function BookForm() {
 
   // Fields Validation
   const formSchema = z.object({
-    title: z.string().min(3).max(50).refine(
+    title: FORM.VALUE_STRING.refine(
       (val) => !books.map(({ title }) => title).includes(val), {
         message: "This title already exists"
       }
     ),
-    author: z.string().min(3).max(50),
-    genre: z.string().min(3).max(50),
-    rating: z.coerce.number().min(1).max(5),
+    author: FORM.VALUE_STRING,
+    genre: FORM.VALUE_STRING,
+    rating: FORM.RATING,
     categories: z.array(z.string()).refine((val => val.length > 0), {
       message: 'You have to select at least one category.',
     }),
