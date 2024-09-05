@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form"
 import { BookCollectionProps } from "@/types"
 import { cn } from "@/lib/utils";
 import { useState } from "react"
+import FORM from '../formValidation/bookForm'
 
 function FilterDrawer() {
   const { setDrawerMode } = useAppStore()
@@ -15,11 +16,11 @@ function FilterDrawer() {
 
   // Fields Validation
   const filterSchema = z.object({
-    type: z.string({ required_error: "Please select an item" }),
-    value: z.string().min(3, { message: 'At least 3 character(s)' }).max(50).optional(),
-    ratingValue: z.coerce.number().optional(),
-    categories: z.string({ required_error: "Please select an item" }).optional(),
-    tags: z.string({ required_error: "Please select an item" }).optional(),
+    type: FORM.SELECT_DROPDOWN.optional(),
+    value: FORM.VALUE_STRING.optional(),
+    ratingValue: FORM.RATING.optional(),
+    categories: FORM.SELECT_DROPDOWN.optional(),
+    tags: FORM.SELECT_DROPDOWN.optional(),
   })
 
   const defaultFormValues = (type: string) => {
@@ -85,7 +86,6 @@ function FilterDrawer() {
     removeFilter()
     form.reset()
   }
-
 
   return (
     <Collapsible className="relative">

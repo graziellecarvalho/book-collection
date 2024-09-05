@@ -1,9 +1,11 @@
+import React from 'react'
 import { Settings, X } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { CategoriesTagsProps } from "@/types";
 import { cn } from "@/lib/utils";
 import { z } from "zod"
+import FORM from '../formValidation/bookForm'
 
 function SettingsDrawer() {
   const { setDrawerMode } = useAppStore();
@@ -24,20 +26,14 @@ function SettingsDrawer() {
   const { toast } = useToast()
 
   const categorySchema = z.object({
-    category: z
-      .string()
-      .min(3, { message: "Category should contain at least 3 char" })
-      .max(50)
+    category: FORM.VALUE_STRING
       .refine((val) => !categories.map((cat) => cat.label).includes(val), {
         message: "This category already exists",
       }),
   });
   
   const tagSchema = z.object({
-    tag: z
-      .string()
-      .min(2, { message: "Tag should contain at least 2 char" })
-      .max(50)
+    tag: FORM.VALUE_STRING
       .refine((val) => !tags.map((tag) => tag.label).includes(val), {
         message: "This tag already exists",
       }),
