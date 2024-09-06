@@ -93,6 +93,7 @@ declare global {
   const ToastTitle: typeof import('./src/components/ui/toast')['ToastTitle']
   const ToastViewport: typeof import('./src/components/ui/toast')['ToastViewport']
   const Toaster: typeof import('./src/components/ui/toaster')['Toaster']
+  const UserDrawer: typeof import('./src/components/UserDrawer')['default']
   const badgeVariants: typeof import('./src/components/ui/badge')['badgeVariants']
   const bookForm: typeof import('./src/formValidation/bookForm')['default']
   const buttonVariants: typeof import('./src/components/ui/button')['buttonVariants']

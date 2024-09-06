@@ -20,10 +20,16 @@ function App() {
 
   return (
     <div>
-      <div className="flex justify-end py-4 gap-3">
-        <BookForm />
-        <SettingsDrawer />
-        <FilterDrawer />
+      <div className="flex justify-between">
+        <div className='flex py-4 gap-3'>
+          <FilterDrawer />
+          <BookForm />
+        </div>
+
+        <div className='flex py-4 gap-3'>
+          <SettingsDrawer />
+          <UserDrawer />
+        </div>
       </div>
       <BookCollectionTable />
     </div>

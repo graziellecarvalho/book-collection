@@ -95,7 +95,7 @@ function FilterDrawer() {
         {/* </Button> */}
       </CollapsibleTrigger>
       <CollapsibleContent className="md:relative absoltute md:h-[105px]">
-        <div className="flex items-end absolute top-2 md:w-[600px] w-92 md:h-[105px] bg-white right-0 rounded-lg md:shadow-none shadow-2xl md:top-2 top-10" style={{ zIndex: '20' }}>
+        <div className="flex items-end absolute top-2 md:w-[600px] w-92 md:h-[105px] bg-white left-0 rounded-lg md:shadow-none shadow-2xl md:top-2 top-10" style={{ zIndex: '20' }}>
           {/* FORM */}
           <Form {...form}>
             <form

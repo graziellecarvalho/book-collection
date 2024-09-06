@@ -1,7 +1,7 @@
 import { ReactNode } from "react"
 import { X } from 'lucide-react';
 
-function DrawerComponent({ children, triggerButton, item }: { children: ReactNode, triggerButton: ReactNode, item: 'settings' | 'form' | 'filter' | null }) {
+function DrawerComponent({ children, triggerButton, item }: { children: ReactNode, triggerButton: ReactNode, item: 'settings' | 'form' | 'filter' | 'user' | null }) {
   const { drawerMode, setDrawerMode } = useAppStore()
   const { setSelectedBook } = useBookCollectionStore()
 
