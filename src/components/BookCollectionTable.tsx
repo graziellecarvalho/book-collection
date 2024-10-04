@@ -172,6 +172,7 @@ function DataTable<TData, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
+  const { isLightModeoOn } = useAppStore()
 
   const table = useReactTable({
     data,
@@ -189,12 +190,12 @@ function DataTable<TData, TValue>({
     <div>
       {/* TABLE */}
       <div className="rounded-md border bg-white">
-        <Table>
+        <Table style={isLightModeoOn ? STYLE.TABLE_DM : STYLE.TABLE_LM}>
           <TableHeader className="text-start">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead style={isLightModeoOn ? STYLE.TABLE_HEADER_DM : STYLE.TABLE_HEADER_LM}  key={header.id}>
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -260,5 +261,23 @@ function BookCollectionTable() {
 
   return <DataTable columns={columns} data={filteredBooks.length === 0 ? books : filteredBooks} />
 }
+
+const STYLE = {
+  TABLE_LM: {
+    background: "inherit",
+    color: 'inherit'
+  },
+  TABLE_DM: {
+    background: "rgba(46,46,46,.8)",
+    color: 'white'
+  },
+  TABLE_HEADER_LM: {
+    color: 'inherit'
+  },
+  TABLE_HEADER_DM: {
+    color: 'white'
+  }
+}
+
 
 export default BookCollectionTable

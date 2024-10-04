@@ -8,7 +8,7 @@ import { z } from "zod"
 import FORM from '../formValidation/bookForm'
 
 function SettingsDrawer() {
-  const { setDrawerMode } = useAppStore();
+  const { isLightModeoOn, setDrawerMode } = useAppStore();
   const {
     books,
     setCategories,
@@ -125,7 +125,7 @@ function SettingsDrawer() {
     <DrawerComponent
       item="settings"
       triggerButton={
-        <Button onClick={() => setDrawerMode("settings")} variant="secondary" className="flex gap-2">
+        <Button style={isLightModeoOn ? STYLE.BUTTON_DM : STYLE.BUTTON} onClick={() => setDrawerMode("settings")} variant="secondary" className="flex gap-2">
           <Settings size={18} />
           Settings
         </Button>
@@ -227,5 +227,16 @@ const Section: React.FC<SectionProps> = ({
     <span className="text-[12px]">Click on the badge to edit, or on X to remove</span>
   </div>
 );
+
+const STYLE = {
+  BUTTON: {
+    background: '#f4f4f5'
+  },
+  BUTTON_DM: {
+    background: 'transparent',
+    color: 'white',
+    border: '.5px solid #9c9c9c'
+  },
+}
 
 export default SettingsDrawer;

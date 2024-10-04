@@ -11,6 +11,7 @@ function FilterDrawer() {
   const { setDrawerMode } = useAppStore()
   const { setFilter, categories, tags, books, removeFilter } = useBookCollectionStore()
   const { toast } = useToast()
+  const { isLightModeoOn } = useAppStore()
 
   const [selectedTypeState, setSelectedTypeState] = useState('')
 
@@ -89,13 +90,21 @@ function FilterDrawer() {
 
   return (
     <Collapsible className="relative">
-      <CollapsibleTrigger className="flex items-center text-sm py-2 px-4 gap-2 bg-[#f4f4f5] rounded-md" type="button" onClick={() => setDrawerMode('filter')}>
+      <CollapsibleTrigger
+        style={isLightModeoOn ? STYLE.TRIGGER_DM: STYLE.TRIGGER }
+        className="flex items-center text-sm py-2 px-4 gap-2 rounded-md"
+        type="button"
+        onClick={() => setDrawerMode('filter')}
+      >
           <Filter size={16} />
           Filter
         {/* </Button> */}
       </CollapsibleTrigger>
       <CollapsibleContent className="md:relative absoltute md:h-[105px]">
-        <div className="flex items-end absolute top-2 md:w-[600px] w-92 md:h-[105px] bg-white right-0 rounded-lg md:shadow-none shadow-2xl md:top-2 top-10" style={{ zIndex: '20' }}>
+        <div
+          className="flex items-end absolute top-2 md:w-[600px] w-92 md:h-[105px] bg-white right-0 rounded-lg md:shadow-none shadow-2xl md:top-2 top-10"
+          style={{ ...(isLightModeoOn ? STYLE.CONTENT_DM: STYLE.CONTENT), zIndex: '20' }}
+        >
           {/* FORM */}
           <Form {...form}>
             <form
@@ -235,6 +244,25 @@ function FilterDrawer() {
       </CollapsibleContent>
     </Collapsible>
   )
+}
+
+const STYLE = {
+  TRIGGER: {
+    background: '#f4f4f5'
+  },
+  TRIGGER_DM: {
+    background: 'transparent',
+    color: 'white',
+    border: '1px solid #9c9c9c'
+  },
+  CONTENT: {
+    background: '#f4f4f5'
+  },
+  CONTENT_DM: {
+    background: 'transparent',
+    color: 'white',
+    border: '1px solid #9c9c9c'
+  },
 }
 
 export default FilterDrawer

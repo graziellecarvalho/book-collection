@@ -60,6 +60,7 @@ declare global {
   const FormItem: typeof import('./src/components/ui/form')['FormItem']
   const FormLabel: typeof import('./src/components/ui/form')['FormLabel']
   const FormMessage: typeof import('./src/components/ui/form')['FormMessage']
+  const Header: typeof import('./src/components/Header')['default']
   const Input: typeof import('./src/components/ui/input')['Input']
   const Label: typeof import('./src/components/ui/label')['Label']
   const React: typeof import('react')['React']
