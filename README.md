@@ -7,7 +7,7 @@ This branch will have upcomming implementations, such as:
 - [ ] Favoriting books
 - [ ] Importing/exporting books
 - [ ] Progress tracking
-- [ ] Light/Dark mode
+- [x] Light/Dark mode
 - [ ] User bio
 - [ ] Author bio
 - [x] Improve book filtering

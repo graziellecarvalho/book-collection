@@ -9,7 +9,7 @@ import FORM from '../formValidation/bookForm'
 
 function BookForm() {
   const { books, setBooks, selectedBook, categories, tags } = useBookCollectionStore()
-  const { drawerMode, setDrawerMode } = useAppStore()
+  const { drawerMode, isLightModeoOn, setDrawerMode } = useAppStore()
 
   const { toast } = useToast()
 
@@ -125,6 +125,7 @@ function BookForm() {
       item="form"
       triggerButton={(
         <Button
+          style={isLightModeoOn ? STYLE.BUTTON_DM : STYLE.BUTTON}
           onClick={() => setDrawerMode('form')}
           variant='secondary'
           className='flex gap-2'
@@ -134,147 +135,158 @@ function BookForm() {
         </Button>
       )}
     >
-      <>
-      <DrawerHeader className="px-0">
-        <DrawerTitle>{selectedBook.id !== '' ? 'Update Book' : 'Add Book'}</DrawerTitle>
-      </DrawerHeader>
+      <div>
+        <DrawerHeader className="px-0">
+          <DrawerTitle>{selectedBook.id !== '' ? 'Update Book' : 'Add Book'}</DrawerTitle>
+        </DrawerHeader>
 
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-4 px-2"
-        >
-          {fieldsInput.map(({ name, label }, idx) => (
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-4 px-2"
+          >
+            {fieldsInput.map(({ name, label }, idx) => (
+              <FormField
+                key={idx}
+                control={form.control}
+                name={name as keyof z.infer<typeof formSchema>}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{label}</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder={`Inform ${name.toLocaleLowerCase()}`}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ))}
+
+            {/* CATEGORIES */}
             <FormField
-              key={idx}
               control={form.control}
-              name={name as keyof z.infer<typeof formSchema>}
-              render={({ field }) => (
+              name="categories"
+              render={() => (
                 <FormItem>
-                  <FormLabel>{label}</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder={`Inform ${name.toLocaleLowerCase()}`}
-                      {...field}
-                    />
-                  </FormControl>
+                  <FormLabel>Categories</FormLabel>
+                  <ScrollArea className="h-52 w-full px-2 gap-2 rounded-md border">
+                    {categories.length !== 0 ? categories.map((item) => (
+                      <FormField
+                        key={item.id}
+                        control={form.control}
+                        name="categories"
+                        render={({ field }) => {
+                          return (
+                            <FormItem
+                              key={item.id}
+                              className="flex flex-row items-center my-2"
+                            >
+                              <FormControl>
+                                <Checkbox
+                                  checked={field.value?.includes(item.label)}
+                                  onCheckedChange={(checked) => {
+                                    return checked
+                                      ? field.onChange([...field.value, item.label])
+                                      : field.onChange(
+                                        field.value?.filter(
+                                          (value) => value !== item.label
+                                        )
+                                      )
+                                  }}
+                                />
+                              </FormControl>
+                              <FormLabel style={{ margin: 0 }} className="text-sm font-normal px-2 ">
+                                {item.label}
+                              </FormLabel>
+                            </FormItem>
+                          )
+                        }}
+                      />
+                    )) : (
+                      <div className="flex items-center gap-2">
+                        <Info size="12" /><span className="text-sm text-slate-500">Go to Settings and add some Categories before proceeding</span>
+                      </div>
+                    )}
+                  </ScrollArea>
                   <FormMessage />
                 </FormItem>
               )}
             />
-          ))}
 
-          {/* CATEGORIES */}
-          <FormField
-            control={form.control}
-            name="categories"
-            render={() => (
-              <FormItem>
-                <FormLabel>Categories</FormLabel>
-                <ScrollArea className="h-52 w-full px-2 gap-2 rounded-md border">
-                  {categories.length !== 0 ? categories.map((item) => (
-                    <FormField
-                      key={item.id}
-                      control={form.control}
-                      name="categories"
-                      render={({ field }) => {
-                        return (
-                          <FormItem
-                            key={item.id}
-                            className="flex flex-row items-center my-2"
-                          >
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value?.includes(item.label)}
-                                onCheckedChange={(checked) => {
-                                  return checked
-                                    ? field.onChange([...field.value, item.label])
-                                    : field.onChange(
-                                      field.value?.filter(
-                                        (value) => value !== item.label
+            {/* TAGS */}
+            <FormField
+              control={form.control}
+              name="tags"
+              render={() => (
+                <FormItem>
+                  <FormLabel>Tags</FormLabel>
+                  <ScrollArea className="h-52 w-full px-2 gap-2 rounded-md border">
+                    {tags.length !== 0 ? tags.map((item) => (
+                      <FormField
+                        key={item.id}
+                        control={form.control}
+                        name="tags"
+                        render={({ field }) => {
+                          return (
+                            <FormItem
+                              key={item.id}
+                              className="flex flex-row items-center my-2"
+                            >
+                              <FormControl>
+                                <Checkbox
+                                  checked={field.value?.includes(item.label)}
+                                  onCheckedChange={(checked) => {
+                                    return checked
+                                      ? field.onChange([...field.value, item.label])
+                                      : field.onChange(
+                                        field.value?.filter(
+                                          (value) => value !== item.label
+                                        )
                                       )
-                                    )
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel style={{ margin: 0 }} className="text-sm font-normal px-2 ">
-                              {item.label}
-                            </FormLabel>
-                          </FormItem>
-                        )
-                      }}
-                    />
-                  )) : (
-                    <div className="flex items-center gap-2">
-                      <Info size="12" /><span className="text-sm text-slate-500">Go to Settings and add some Categories before proceeding</span>
-                    </div>
-                  )}
-                </ScrollArea>
-                <FormMessage />
-              </FormItem>
+                                  }}
+                                />
+                              </FormControl>
+                              <FormLabel style={{ margin: 0 }} className="text-sm font-normal px-2 ">
+                                {item.label}
+                              </FormLabel>
+                            </FormItem>
+                          )
+                        }}
+                      />
+                    )) : (
+                      <div className="flex items-center gap-2">
+                        <Info size="12" /><span className="text-sm text-slate-500">Go to Settings and add some Tags before proceeding</span>
+                      </div>
+                    )}
+                  </ScrollArea>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {selectedBook.id !== '' ? (
+              <Button onClick={(e) => onUpdateBook(e)}>Update</Button>
+            ) : (
+              <Button type="submit" disabled={categories.length === 0 || tags.length === 0}>Submit</Button>
             )}
-          />
-
-          {/* TAGS */}
-          <FormField
-            control={form.control}
-            name="tags"
-            render={() => (
-              <FormItem>
-                <FormLabel>Tags</FormLabel>
-                <ScrollArea className="h-52 w-full px-2 gap-2 rounded-md border">
-                  {tags.length !== 0 ? tags.map((item) => (
-                    <FormField
-                      key={item.id}
-                      control={form.control}
-                      name="tags"
-                      render={({ field }) => {
-                        return (
-                          <FormItem
-                            key={item.id}
-                            className="flex flex-row items-center my-2"
-                          >
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value?.includes(item.label)}
-                                onCheckedChange={(checked) => {
-                                  return checked
-                                    ? field.onChange([...field.value, item.label])
-                                    : field.onChange(
-                                      field.value?.filter(
-                                        (value) => value !== item.label
-                                      )
-                                    )
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel style={{ margin: 0 }} className="text-sm font-normal px-2 ">
-                              {item.label}
-                            </FormLabel>
-                          </FormItem>
-                        )
-                      }}
-                    />
-                  )) : (
-                    <div className="flex items-center gap-2">
-                      <Info size="12" /><span className="text-sm text-slate-500">Go to Settings and add some Tags before proceeding</span>
-                    </div>
-                  )}
-                </ScrollArea>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          {selectedBook.id !== '' ? (
-            <Button onClick={(e) => onUpdateBook(e)}>Update</Button>
-          ) : (
-            <Button type="submit" disabled={categories.length === 0 || tags.length === 0}>Submit</Button>
-          )}
-        </form>
-      </Form>
-      </>
+          </form>
+        </Form>
+      </div>
     </DrawerComponent>
   )
+}
+
+const STYLE = {
+  BUTTON: {
+    background: '#f4f4f5'
+  },
+  BUTTON_DM: {
+    background: 'transparent',
+    color: 'white',
+    border: '.5px solid #9c9c9c'
+  },
 }
 
 export default BookForm

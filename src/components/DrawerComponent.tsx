@@ -20,18 +20,24 @@ function DrawerComponent({ children, triggerButton, item }: { children: ReactNod
       </DrawerTrigger>
 
       {/* DRAWER CONTENT */}
-      <DrawerContent className='h-screen left-auto mt-0 md:w-[500px] w-96 rounded-none px-4'>
+      <DrawerContent style={STYLE.FORM} className='h-screen left-auto mt-0 md:w-[500px] w-96 rounded-none px-4'>
         <DrawerClose className="w-fit flex items-center" onClick={closeDrawer}>
           <X size={12} />Close
         </DrawerClose>
         <ScrollArea>
-          <>
           {children}
-          </>
         </ScrollArea>
       </DrawerContent>
     </Drawer>
   )
+}
+
+const STYLE = {
+  FORM: {
+    background: '#2e2e2e',
+    border: '1px solid #9c9c9c',
+    color: 'white'
+  }
 }
 
 export default DrawerComponent
