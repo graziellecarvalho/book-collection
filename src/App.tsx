@@ -19,16 +19,27 @@ function App() {
   }, [drawerMode])
 
   return (
-    <div className={`wrapper ${isLightModeoOn ? 'dark-mode' : 'light-mode'}`}>
-      <Header />
-      <div id="app-wrapper">
-        <div className="app-wrapper flex justify-end py-4 gap-3">
-          <BookForm />
-          <FilterDrawer />
+    <>
+      <div className={`wrapper ${isLightModeoOn ? 'dark-mode' : 'light-mode'}`}>
+        <Header />
+        <div id="app-wrapper">
+          <div className="app-wrapper flex justify-end py-4 gap-3">
+            <BookForm />
+            <FilterDrawer />
+          </div>
+          <BookCollectionTable />
         </div>
-        <BookCollectionTable />
       </div>
-    </div>
+
+      <div className={`wrapper ${isLightModeoOn ? 'dark-mode' : 'light-mode'}`}>
+        <Header />
+        <div id="page-wrapper">
+          <div className="py-4 gap-3">
+            <BookInfo />
+          </div>
+        </div>
+      </div>
+    </>
   )
 }
 

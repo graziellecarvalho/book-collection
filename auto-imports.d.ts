@@ -20,6 +20,7 @@ declare global {
   const Badge: typeof import('./src/components/ui/badge')['Badge']
   const BookCollectionTable: typeof import('./src/components/BookCollectionTable')['default']
   const BookForm: typeof import('./src/components/BookForm')['default']
+  const BookInfo: typeof import('./src/components/BookInfo')['default']
   const Button: typeof import('./src/components/ui/button')['Button']
   const Checkbox: typeof import('./src/components/ui/checkbox')['Checkbox']
   const Collapsible: typeof import('./src/components/ui/collapsible')['Collapsible']

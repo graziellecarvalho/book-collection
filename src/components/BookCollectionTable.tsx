@@ -8,7 +8,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { BookCollectionProps } from "@/types"
-import { ChevronsUpDown, Trash, Pencil } from "lucide-react"
+import { ChevronsUpDown, Trash, Pencil, Eye } from "lucide-react"
 import { DotsHorizontalIcon, StarFilledIcon, StarIcon } from "@radix-ui/react-icons"
 
 interface ColumnType {
@@ -102,6 +102,13 @@ const ContextMenu = ({ book }: { book: BookCollectionProps }) => {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Options</DropdownMenuLabel>
           <DropdownMenuSeparator />
+          <DropdownMenuItem
+            className="gap-2"
+            onClick={() => setSelectedBook(book)}
+          >
+            <Eye size="12" />
+            See info
+          </DropdownMenuItem>
           <DropdownMenuItem
             className="gap-2"
             onClick={() => {
